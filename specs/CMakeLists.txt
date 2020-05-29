@@ -33,6 +33,7 @@ function(generateNativeTables)
     carbon_black_info.table
     carves.table
     chrome_extensions.table
+    chrome_extension_content_scripts.table
     cpuid.table
     curl.table
     curl_certificate.table
@@ -119,6 +120,7 @@ function(generateNativeTables)
     "darwin/running_apps.table:macos"
     "darwin/safari_extensions.table:macos"
     "darwin/sandboxes.table:macos"
+    "darwin/screenlock.table:macos"
     "darwin/shared_folders.table:macos"
     "darwin/sharing_preferences.table:macos"
     "darwin/signature.table:macos"
@@ -138,7 +140,6 @@ function(generateNativeTables)
     "freebsd/fbsd_kmods.table:freebsd"
     "freebsd/pkg_packages.table:freebsd"
     "linux/selinux_events.table:linux"
-    "linux/socket_events.table:linux"
     "linux/elf_symbols.table:linux"
     "linux/portage_use.table:linux"
     "linux/rpm_package_files.table:linux"
@@ -187,6 +188,7 @@ function(generateNativeTables)
     "posix/docker_container_networks.table:linux,macos,freebsd"
     "posix/docker_container_ports.table:linux,macos,freebsd"
     "posix/docker_container_processes.table:linux,macos,freebsd"
+    "posix/docker_container_fs_changes.table:linux,macos,freebsd"
     "posix/docker_container_stats.table:linux,macos,freebsd"
     "posix/docker_containers.table:linux,macos,freebsd"
     "posix/docker_image_labels.table:linux,macos,freebsd"
@@ -204,6 +206,15 @@ function(generateNativeTables)
     "posix/known_hosts.table:linux,macos,freebsd"
     "posix/last.table:linux,macos,freebsd"
     "posix/load_average.table:linux,macos,freebsd"
+    "posix/lxd_instances.table:linux"
+    "posix/lxd_instance_config.table:linux"
+    "posix/lxd_instance_devices.table:linux"
+    "posix/lxd_cluster.table:linux"
+    "posix/lxd_cluster_members.table:linux"
+    "posix/lxd_images.table:linux"
+    "posix/lxd_certificates.table:linux"
+    "posix/lxd_networks.table:linux"
+    "posix/lxd_storage_pools.table:linux"
     "posix/magic.table:linux,macos,freebsd"
     "posix/memory_array_mapped_addresses.table:linux,macos"
     "posix/memory_arrays.table:linux,macos"
@@ -221,6 +232,7 @@ function(generateNativeTables)
     "posix/prometheus_metrics.table:linux,macos,freebsd"
     "posix/shell_history.table:linux,macos,freebsd"
     "posix/smbios_tables.table:linux,macos"
+    "posix/socket_events.table:linux,macos"
     "posix/sudoers.table:linux,macos,freebsd"
     "posix/suid_bin.table:linux,macos,freebsd"
     "posix/system_controls.table:linux,macos,freebsd"
@@ -228,9 +240,9 @@ function(generateNativeTables)
     "posix/usb_devices.table:linux,macos"
     "posix/user_events.table:linux,macos,freebsd"
     "posix/yum_sources.table:linux,macos,freebsd"
-    "sleuthkit/device_file.table:linux,macos,freebsd"
-    "sleuthkit/device_hash.table:linux,macos,freebsd"
-    "sleuthkit/device_partitions.table:linux,macos,freebsd"
+    "sleuthkit/device_file.table:linux,macos,freebsd,windows"
+    "sleuthkit/device_hash.table:linux,macos,freebsd,windows"
+    "sleuthkit/device_partitions.table:linux,macos,freebsd,windows"
     "smart/smart_drive_info.table:linux,macos"
     "user_groups.table:linux,macos,windows"
     "windows/bitlocker_info.table:windows"
@@ -268,8 +280,11 @@ function(generateNativeTables)
     "windows/autoexec.table:windows"
     "windows/default_environment.table:windows"
     "windows/windows_security_products.table:windows"
+    "windows/windows_security_center.table:windows"
     "windows/windows_optional_features.table:windows"
     "windows/connectivity.table:windows"
+    "windows/userassist.table:windows"
+    "windows/hvci_status.table:windows"
     "yara/yara_events.table:linux,macos"
     "yara/yara.table:linux,macos,freebsd"
   )

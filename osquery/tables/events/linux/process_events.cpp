@@ -25,10 +25,7 @@ const std::unordered_map<int, std::string> kSyscallNameMap = {
     {__NR_clone, "clone"}};
 }
 
-FLAG(bool,
-     audit_allow_process_events,
-     true,
-     "Allow the audit publisher to install process event monitoring rules");
+DECLARE_bool(audit_allow_process_events);
 
 FLAG(bool,
      audit_allow_fork_process_events,
@@ -170,8 +167,12 @@ Status AuditProcessEventSubscriber::ProcessEvents(
     CopyFieldFromMap(row, syscall_event_record->fields, "auid", "0");
     CopyFieldFromMap(row, syscall_event_record->fields, "uid", "0");
     CopyFieldFromMap(row, syscall_event_record->fields, "euid", "0");
+    CopyFieldFromMap(row, syscall_event_record->fields, "fsuid", "0");
+    CopyFieldFromMap(row, syscall_event_record->fields, "suid", "0");
     CopyFieldFromMap(row, syscall_event_record->fields, "gid", "0");
     CopyFieldFromMap(row, syscall_event_record->fields, "egid", "0");
+    CopyFieldFromMap(row, syscall_event_record->fields, "fsgid", "0");
+    CopyFieldFromMap(row, syscall_event_record->fields, "sgid", "0");
 
     if (!GetSyscallName(row["syscall"], event_data.syscall_number)) {
       row["syscall"] = std::to_string(event_data.syscall_number);

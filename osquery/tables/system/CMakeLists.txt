@@ -128,6 +128,7 @@ function(generateOsqueryTablesSystemSystemtable)
       darwin/quicklook_cache.cpp
       darwin/running_apps.mm
       darwin/sandboxes.cpp
+      darwin/screenlock.mm
       darwin/shared_folders.mm
       darwin/sharing_preferences.cpp
       darwin/signature.mm
@@ -197,15 +198,18 @@ function(generateOsqueryTablesSystemSystemtable)
       windows/system_info.cpp
       windows/user_groups.cpp
       windows/users.cpp
+      windows/userassist.cpp
       windows/video_info.cpp
       windows/windows_crashes.cpp
       windows/windows_optional_features.cpp
       windows/windows_security_products.cpp
+      windows/windows_security_center.cpp
       windows/wmi_bios_info.cpp
       windows/wmi_cli_event_consumers.cpp
       windows/wmi_event_filters.cpp
       windows/wmi_filter_consumer_binding.cpp
       windows/wmi_script_event_consumers.cpp
+      windows/hvci_status.cpp
     )
   endif()
 
@@ -230,6 +234,7 @@ function(generateOsqueryTablesSystemSystemtable)
     osquery_utils_system_systemutils
     osquery_utils_system_time
     osquery_utils_system_uptime
+    osquery_worker_ipc_platformtablecontaineripc
     thirdparty_boost
     osquery_rows_processes_header
   )
@@ -310,6 +315,7 @@ function(generateOsqueryTablesSystemSystemtable)
       windows/registry.h
       windows/certificates.h
       windows/users.h
+      windows/userassist.h
     )
   endif()
 

@@ -69,6 +69,9 @@ function(generateTestsIntegrationTablesTestsTest)
     users.cpp
     ssh_configs.cpp
     user_ssh_keys.cpp
+    device_file.cpp
+    device_hash.cpp
+    device_partitions.cpp
   )
 
   if(DEFINED PLATFORM_POSIX)
@@ -80,9 +83,6 @@ function(generateTestsIntegrationTablesTestsTest)
       block_devices.cpp
       cpu_time.cpp
       crontab.cpp
-      device_file.cpp
-      device_hash.cpp
-      device_partitions.cpp
       disk_encryption.cpp
       dns_resolvers.cpp
       docker_container_labels.cpp
@@ -285,6 +285,7 @@ function(generateTestsIntegrationTablesTestsTest)
       services.cpp
       shared_resources.cpp
       startup_items.cpp
+      userassist.cpp
       video_info.cpp
       winbaseobj.cpp
       windows_crashes.cpp
@@ -295,6 +296,7 @@ function(generateTestsIntegrationTablesTestsTest)
       wmi_event_filters.cpp
       wmi_filter_consumer_binding.cpp
       wmi_script_event_consumers.cpp
+      hvci_status.cpp
     )
 
     list(APPEND source_files ${platform_source_files})

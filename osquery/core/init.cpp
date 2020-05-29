@@ -136,6 +136,7 @@ const std::string kBackupDefaultFlagfile{OSQUERY_HOME "osquery.flags.default"};
 
 const size_t kDatabaseMaxRetryCount{25};
 const size_t kDatabaseRetryDelay{200};
+bool Initializer::isWorker_{false};
 
 namespace {
 
@@ -209,6 +210,8 @@ Initializer::Initializer(int& argc,
       chrono_clock::now().time_since_epoch().count()));
   // The config holds the initialization time for easy access.
   Config::setStartTime(getUnixTime());
+
+  isWorker_ = hasWorkerVariable();
 
   // osquery can function as the daemon or shell depending on argv[0].
   if (tool == ToolType::SHELL_DAEMON) {
@@ -321,7 +324,7 @@ Initializer::Initializer(int& argc,
   std::signal(SIGINT, signalHandler);
 
   // If the caller is checking configuration, disable the watchdog/worker.
-  if (FLAGS_config_check) {
+  if (FLAGS_config_check || FLAGS_database_dump || FLAGS_config_dump) {
     FLAGS_disable_watchdog = true;
   }
 
@@ -357,7 +360,7 @@ void Initializer::initDaemon() const {
     return;
   }
 
-  if (FLAGS_config_check) {
+  if (FLAGS_config_check || FLAGS_database_dump || FLAGS_config_dump) {
     // No need to daemonize, emit log lines, or create process mutexes.
     return;
   }
@@ -482,7 +485,7 @@ void Initializer::initWorkerWatcher(const std::string& name) const {
 }
 
 bool Initializer::isWorker() {
-  return hasWorkerVariable();
+  return isWorker_;
 }
 
 bool Initializer::isWatcher() {
@@ -506,9 +509,9 @@ void Initializer::initActivePlugin(const std::string& type,
   }));
 
   if (!status.ok()) {
-    LOG(ERROR) << "Cannot activate " << name << " " << type
-               << " plugin: " << status.getMessage();
-    requestShutdown(EXIT_CATASTROPHIC);
+    std::string message = "Cannot activate " + name + " " + type +
+                          " plugin: " + status.getMessage();
+    requestShutdown(EXIT_CATASTROPHIC, message);
   }
 }
 
@@ -516,7 +519,7 @@ void Initializer::start() const {
   // Pre-extension manager initialization options checking.
   // If the shell or daemon does not need extensions and it will exit quickly,
   // prefer to disable the extension manager.
-  if ((FLAGS_config_check || FLAGS_config_dump) &&
+  if ((FLAGS_config_check || FLAGS_config_dump || FLAGS_database_dump) &&
       !Watcher::get().hasManagedExtensions()) {
     FLAGS_disable_extensions = true;
   }
@@ -532,10 +535,11 @@ void Initializer::start() const {
       }
 
       if (i == kDatabaseMaxRetryCount) {
-        LOG(ERROR) << RLOG(1629) << binary_
-                   << " initialize failed: Could not initialize database";
+        auto message = std::string(RLOG(1629)) + binary_ +
+                       " initialize failed: Could not initialize database";
         auto retcode = (isWorker()) ? EXIT_CATASTROPHIC : EXIT_FAILURE;
-        requestShutdown(retcode);
+        requestShutdown(retcode, message);
+        return;
       }
 
       sleepFor(kDatabaseRetryDelay);
@@ -543,9 +547,9 @@ void Initializer::start() const {
 
     // Ensure the database results version is up to date before proceeding
     if (!upgradeDatabase()) {
-      LOG(ERROR) << "Failed to upgrade database";
       auto retcode = (isWorker()) ? EXIT_CATASTROPHIC : EXIT_FAILURE;
-      requestShutdown(retcode);
+      requestShutdown(retcode, "Failed to upgrade database");
+      return;
     }
   }
 
@@ -581,11 +585,13 @@ void Initializer::start() const {
     // A configuration check exits the application.
     // Make sure to request a shutdown as plugins may have created services.
     requestShutdown(s.getCode());
+    return;
   }
 
   if (FLAGS_database_dump) {
     dumpDatabase();
     requestShutdown();
+    return;
   }
 
   // Load the osquery config using the default/active config plugin.
@@ -704,8 +710,9 @@ void Initializer::requestShutdown(int retcode) {
   });
 }
 
-void Initializer::requestShutdown(int retcode, const std::string& system_log) {
-  systemLog(system_log);
+void Initializer::requestShutdown(int retcode, const std::string& message) {
+  LOG(ERROR) << message;
+  systemLog(message);
   requestShutdown(retcode);
 }
 
